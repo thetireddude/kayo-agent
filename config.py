@@ -1,1 +1,2 @@
-working_directory = "calculator"
+WORKING_DIRECTORY = "calculator"
+READ_MAX_CHARS = 10

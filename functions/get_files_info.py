@@ -3,6 +3,9 @@ from pathlib import Path
 
 def get_files_info(working_directory, directory="."):
     abs_working_dir = os.path.abspath(working_directory)
+
+    # a path beginning with "/" becomes root-relative on the current drive
+    # os.path.join will discard abs_working_dir and return the absolute path.
     target_dir = os.path.normpath(os.path.join(abs_working_dir, directory))
 
     is_valid_path = os.path.commonpath([abs_working_dir, target_dir]) == abs_working_dir
@@ -10,11 +13,11 @@ def get_files_info(working_directory, directory="."):
     print(f"\ntarget directory: {target_dir}")
     print(f"is_valid_path: {is_valid_path}\n")
 
-    if not Path(target_dir).is_dir():
-        return f'Error: "{target_dir}" is not a directory'
     if not is_valid_path:
         return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
-    
+    if not Path(target_dir).is_dir():
+        return f'Error: "{target_dir}" is not a directory'
+
     
     dir_contents = []
     with os.scandir(target_dir) as entries:
@@ -27,3 +30,4 @@ def get_files_info(working_directory, directory="."):
             except Exception as e:
                 return f"Error: {e}"
     return dir_contents
+

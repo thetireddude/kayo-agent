@@ -1,6 +1,27 @@
 import os
 import subprocess
 from config import EXECUTION_TIMEOUT
+from google.genai import types
+
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description=f"Runs python file at the specified file path relative to the working directory. Accepts addtional CLI arguments as an optional array. Execution times out at {EXECUTION_TIMEOUT} seconds.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="File path to run python code from, relative to the working directory (default is the working directory itself)",
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                items=types.Schema(type=types.Type.STRING),
+                description="content to write to file, of type STRING"
+            ),
+        },
+        required=["file_path"]
+    ),
+)
 
 def run_python_file(working_directory, file_path, args=None):
     abs_working_dir = os.path.abspath(working_directory)

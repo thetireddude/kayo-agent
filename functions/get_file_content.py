@@ -2,6 +2,22 @@ import os
 from pathlib import Path
 import io
 from config import READ_MAX_CHARS
+from google.genai import types
+
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
+    description=f"Returns file contents of a specified file path relative to the working directory. Truncates at a maximum character limit of {READ_MAX_CHARS}",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="File path to get file contents from, relative to the working directory (default is the working directory itself)",
+            ),
+        },
+        required=["file_path"]
+    ),
+)
 
 def get_file_content(working_directory, file_path):
     abs_working_dir = os.path.abspath(working_directory)

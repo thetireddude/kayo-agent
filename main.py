@@ -7,6 +7,7 @@ from google.genai import types
 from prompts import system_prompt
 from call_function import available_functions
 from call_function import call_function
+from config import AGENTIC_LOOP_LIMIT
 
 def main():
     load_dotenv()
@@ -25,6 +26,7 @@ def main():
     prompt = args.user_prompt
     verbose = args.verbose
 
+    # provides conversation history context to model
     messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
 
     def getResponse():
@@ -38,44 +40,64 @@ def main():
         )
         return response
 
-    try:
-        response = getResponse()
-    except Exception as e:
-        print(f'Error: getResponse(): {e}')
-        return
+    # agentic loop iterations
+    for i in range(AGENTIC_LOOP_LIMIT+1):
 
-    function_call_responses = []
+        if i == AGENTIC_LOOP_LIMIT:
+            print(f'Error: AGENTIC_LOOP_LIMIT of {AGENTIC_LOOP_LIMIT} reached')
+            exit(1)
 
-    if verbose:
-        print(f"Prompt:\n{prompt}\n")
-        # print(f"System Prompt:\n{system_prompt}")
-        print(f"Input tokens: {response.usage_metadata.prompt_token_count}\n")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}\n")
+        try:
+            response = getResponse()
+        except Exception as e:
+            print(f'Error: getResponse(): {e}')
+            return
 
-    if response.function_calls:
-        if len(response.function_calls) != 0:
-            for function_call in response.function_calls:
-                # print(f'function call: {function_call}')
+        if verbose:
+            print(f"Prompt:\n{prompt}\n")
 
-                function_call_response = call_function(function_call)
+            # print(f"System Prompt:\n{system_prompt}")
 
-                if not function_call_response.parts:
-                    raise Exception 
-                if not function_call_response.parts[0].function_response:
-                    raise Exception
-                if not function_call_response.parts[0].function_response.response:
-                    raise Exception
+            print(f"Input tokens: {response.usage_metadata.prompt_token_count}\n")
+            print(f"Response tokens: {response.usage_metadata.candidates_token_count}\n")
 
-                function_call_responses.append(function_call_response.parts[0])
+        # append prompt responses to messages
+        for candidate in response.candidates:
+            messages.append(candidate.content)
 
-                if verbose:
-                    print(f"-> {function_call_response.parts[0].function_response.response}\n")
+        # for functionality of multiple function calls in one pass 
+        # eg: websearch to supplement get_files_info
+        function_call_responses = []
 
-    print(f"Response text:\n - {response.text}")
+        if response.function_calls:
+            if len(response.function_calls) != 0:
+                for function_call in response.function_calls:
 
-    # list all models available via the gemini api
-    # for model in client.models.list():
-    #     print(model.name)
+                    # print(f'function call: {function_call}')
+
+                    function_call_response = call_function(function_call)
+
+                    if not function_call_response.parts:
+                        raise Exception 
+                    if not function_call_response.parts[0].function_response:
+                        raise Exception
+                    if not function_call_response.parts[0].function_response.response:
+                        raise Exception
+
+                    function_call_responses.append(function_call_response.parts[0])
+
+                    if verbose:
+                        print(f"-> {function_call_response.parts[0].function_response.response}\n")
+        else:
+            print(f"Response text:\n - {response.text}")
+            return
+
+        # append function call results to messages
+        messages.append(types.Content(role="user", parts=function_call_responses))
+
+        # for debugging - list all models available via the gemini api
+        # for model in client.models.list():
+        #     print(model.name)
 
 if __name__ == "__main__":
     main()

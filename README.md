@@ -210,24 +210,6 @@ User Prompt → Gemini → Function Call → Result → Gemini → ... → Final
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Here are some ideas:
-
-- [ ] Add support for more programming languages
-- [ ] Implement file search/grep functionality
-- [ ] Add git operations (commit, branch, diff)
-- [ ] Create a web interface
-- [ ] Add support for other LLM providers
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
 ## 🙏 Acknowledgments
 
 - Built with [Google Gemini API](https://ai.google.dev/)

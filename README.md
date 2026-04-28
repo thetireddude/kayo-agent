@@ -51,7 +51,8 @@ Kayo doesn't just respond once—it iterates through tasks, making multiple func
 ### Prerequisites
 
 - Python 3.8+
-- A Google Gemini API key ([Get one here](https://ai.google.dev/))
+- A Google Gemini API key ([Get one here](https://aistudio.google.com/api-keys))
+
 
 ### Installation
 
@@ -79,6 +80,7 @@ Kayo doesn't just respond once—it iterates through tasks, making multiple func
    ```env
    GEMINI_API_KEY=your_api_key_here
    ```
+   Gemma 4 31B is recommended, as it provides the most flexible rate limits right now. This could change in the future.
 
 5. **Update your working directory**
    

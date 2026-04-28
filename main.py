@@ -51,6 +51,13 @@ def main():
             response = getResponse()
         except Exception as e:
             print(f'Error: getResponse(): {e}')
+
+            # error code 500 (internal error) handling
+            # re-prompt model to try again without any new context
+            e_list = e.split(' ')
+            if e_list[0].strip() == "500":
+                continue
+
             return
 
         if verbose:

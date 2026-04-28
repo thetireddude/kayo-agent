@@ -45,7 +45,7 @@ def main():
 
         if i == AGENTIC_LOOP_LIMIT:
             print(f'Error: AGENTIC_LOOP_LIMIT of {AGENTIC_LOOP_LIMIT} reached')
-            exit(1)
+            break
 
         try:
             response = getResponse()
@@ -57,16 +57,7 @@ def main():
             e_list = e.split(' ')
             if e_list[0].strip() == "500":
                 continue
-
             return
-
-        if verbose:
-            print(f"Prompt:\n{prompt}\n")
-
-            # print(f"System Prompt:\n{system_prompt}")
-
-            print(f"Input tokens: {response.usage_metadata.prompt_token_count}\n")
-            print(f"Response tokens: {response.usage_metadata.candidates_token_count}\n")
 
         # append prompt responses to messages
         for candidate in response.candidates:
@@ -96,8 +87,7 @@ def main():
                     if verbose:
                         print(f"-> {function_call_response.parts[0].function_response.response}\n")
         else:
-            print(f"Response text:\n - {response.text}")
-            return
+            break      
 
         # append function call results to messages
         messages.append(types.Content(role="user", parts=function_call_responses))
@@ -105,6 +95,17 @@ def main():
         # for debugging - list all models available via the gemini api
         # for model in client.models.list():
         #     print(model.name)
+
+    if verbose:
+            print(f"Prompt:\n{prompt}\n")
+
+            # print(f"System Prompt:\n{system_prompt}")
+
+            print(f"Input tokens: {response.usage_metadata.prompt_token_count}\n")
+            print(f"Response tokens: {response.usage_metadata.candidates_token_count}\n")
+
+    print(f"Response text:\n - {response.text}")
+    return
 
 if __name__ == "__main__":
     main()

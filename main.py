@@ -54,7 +54,7 @@ def main():
 
             # error code 500 (internal error) handling
             # re-prompt model to try again without any new context
-            e_list = e.split(' ')
+            e_list = str(e).split(' ')
             if e_list[0].strip() == "500":
                 continue
             return

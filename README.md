@@ -20,6 +20,12 @@ Kayo is an **agentic AI coding assistant** powered by Google's Gemini API that c
 
 Think of it as having a junior developer who never sleeps, never complains, and works entirely from the command line.
 
+### 🎬 See It In Action
+
+https://github.com/yourusername/kayo/assets/your-asset-id/kayo-demo.mp4
+
+> A fully functional website generated entirely by Kayo—from a single prompt to production-ready code.
+
 ---
 
 ## ✨ Features
